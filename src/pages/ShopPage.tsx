@@ -158,7 +158,7 @@ export default function ShopPage() {
             <div className="modal-body">
               {selectedListing.images?.length > 0 && (
                 <div style={{ display: 'flex', gap: 8, marginBottom: 20, overflowX: 'auto' }}>
-                  {selectedListing.images.map((img, i) => (
+                  {selectedListing.images.map((img: string, i: number) => (
                     <img key={i} src={img} alt="" style={{ height: 200, width: 'auto', borderRadius: 8, flexShrink: 0 }} />
                   ))}
                 </div>
