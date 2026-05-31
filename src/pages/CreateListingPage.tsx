@@ -25,7 +25,7 @@ export default function CreateListingPage() {
 
   useEffect(() => {
     if (!slug) return
-    supabase.from('shops').select('*').eq('slug', slug).single().then(({ data }) => setShop(data))
+    supabase.from('shops').select('*').eq('slug', slug).single().then(({ data }: { data: Shop | null }) => setShop(data))
   }, [slug])
 
   function set(key: string, value: string | boolean) {

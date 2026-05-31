@@ -16,11 +16,11 @@ export default function ShopPage() {
   useEffect(() => {
     if (!slug) return
     async function load() {
-      const { data: shopData } = await supabase.from('shops').select('*').eq('slug', slug).single()
+      const { data: shopData } = await supabase.from('shops').select('*').eq('slug', slug).single() as { data: Shop | null }
       if (!shopData) { setNotFound(true); setLoading(false); return }
       setShop(shopData)
 
-      const { data: listData } = await supabase.from('listings').select('*').eq('shop_id', shopData.id).order('created_at', { ascending: false })
+      const { data: listData } = await supabase.from('listings').select('*').eq('shop_id', shopData.id).order('created_at', { ascending: false }) as { data: Listing[] | null }
       setListings(listData || [])
       setLoading(false)
     }
@@ -118,11 +118,11 @@ export default function ShopPage() {
             </div>
 
             <div className="product-grid">
-              {listings.map(listing => (
+              {listings.map((listing: Listing) => (
                 <div key={listing.id} className="card product-card" onClick={() => setSelectedListing(listing)}>
                   <div className="product-card-image">
                     {listing.images?.[0]
-                      ? <img src={listing.images[0]} alt={listing.title} />
+                      ? <img src={(listing.images as string[])[0]} alt={listing.title} />
                       : <div className="no-image">🖼️</div>
                     }
                     {discount(listing) && <span className="product-card-badge">-{discount(listing)}%</span>}

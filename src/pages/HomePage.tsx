@@ -12,7 +12,7 @@ export default function HomePage() {
 
   useEffect(() => {
     supabase.from('shops').select('*').order('created_at', { ascending: false }).limit(12)
-      .then(({ data }) => { setShops(data || []); setLoading(false) })
+      .then(({ data }: { data: Shop[] | null }) => { setShops(data || []); setLoading(false) })
   }, [])
 
   return (
