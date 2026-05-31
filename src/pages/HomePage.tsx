@@ -11,8 +11,18 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('shops').select('*').order('created_at', { ascending: false }).limit(12)
-      .then(({ data }: { data: Shop[] | null }) => { setShops(data || []); setLoading(false) })
+    async function fetchShops() {
+      try {
+        const result = await supabase.from('shops').select('*').order('created_at', { ascending: false }).limit(12)
+        const data = result.data as Shop[] | null
+        setShops(data || [])
+      } catch (error) {
+        console.error('Error fetching shops:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchShops()
   }, [])
 
   return (

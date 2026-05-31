@@ -25,7 +25,16 @@ export default function CreateListingPage() {
 
   useEffect(() => {
     if (!slug) return
-    supabase.from('shops').select('*').eq('slug', slug).single().then(({ data }: { data: Shop | null }) => setShop(data))
+    async function fetchShop() {
+      try {
+        const result = await supabase.from('shops').select('*').eq('slug', slug).single()
+        const data = result.data as Shop | null
+        setShop(data)
+      } catch (error) {
+        console.error('Error fetching shop:', error)
+      }
+    }
+    fetchShop()
   }, [slug])
 
   function set(key: string, value: string | boolean) {

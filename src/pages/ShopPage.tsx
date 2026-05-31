@@ -16,13 +16,21 @@ export default function ShopPage() {
   useEffect(() => {
     if (!slug) return
     async function load() {
-      const { data: shopData } = await supabase.from('shops').select('*').eq('slug', slug).single() as { data: Shop | null }
-      if (!shopData) { setNotFound(true); setLoading(false); return }
-      setShop(shopData)
+      try {
+        const shopResult = await supabase.from('shops').select('*').eq('slug', slug).single()
+        const shopData = shopResult.data as Shop | null
+        if (!shopData) { setNotFound(true); setLoading(false); return }
+        setShop(shopData)
 
-      const { data: listData } = await supabase.from('listings').select('*').eq('shop_id', shopData.id).order('created_at', { ascending: false }) as { data: Listing[] | null }
-      setListings(listData || [])
-      setLoading(false)
+        const listResult = await supabase.from('listings').select('*').eq('shop_id', shopData.id).order('created_at', { ascending: false })
+        const listData = listResult.data as Listing[] | null
+        setListings(listData || [])
+      } catch (error) {
+        console.error('Error loading shop:', error)
+        setNotFound(true)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [slug])

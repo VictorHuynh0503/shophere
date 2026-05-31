@@ -32,9 +32,15 @@ export default function CreateShopPage() {
   async function checkSlug(slug: string) {
     if (slug.length < 3) { setSlugAvailable(null); return }
     setCheckingSlug(true)
-    const { data } = await supabase.from('shops').select('id').eq('slug', slug).single()
-    setSlugAvailable(!data)
-    setCheckingSlug(false)
+    try {
+      const result = await supabase.from('shops').select('id').eq('slug', slug).single()
+      const data = result.data as { id: string } | null
+      setSlugAvailable(!data)
+    } catch (error) {
+      console.error('Error checking slug:', error)
+    } finally {
+      setCheckingSlug(false)
+    }
   }
 
   async function handleSubmit() {
@@ -44,23 +50,32 @@ export default function CreateShopPage() {
     if (!slugAvailable) { toast('Please choose an available shop URL', 'error'); return }
 
     setLoading(true)
-    const { data, error } = await supabase.from('shops').insert({
-      slug: form.slug,
-      name: form.name,
-      description: form.description,
-      owner_email: form.owner_email,
-      logo_url: logoImages[0] || null,
-      banner_url: bannerImages[0] || null,
-    }).select().single()
+    try {
+      const result = await supabase.from('shops').insert({
+        slug: form.slug,
+        name: form.name,
+        description: form.description,
+        owner_email: form.owner_email,
+        logo_url: logoImages[0] || null,
+        banner_url: bannerImages[0] || null,
+      }).select().single()
 
-    if (error) {
-      toast(error.message || 'Failed to create shop', 'error')
+      const data = result.data as any
+      const error = result.error as any
+
+      if (error) {
+        toast(error.message || 'Failed to create shop', 'error')
+        setLoading(false)
+        return
+      }
+
+      toast('🎉 Shop created successfully!', 'success')
+      setTimeout(() => navigate(`/shop/${data.slug}`), 800)
+    } catch (error) {
+      console.error('Error creating shop:', error)
+      toast('Failed to create shop', 'error')
       setLoading(false)
-      return
     }
-
-    toast('🎉 Shop created successfully!', 'success')
-    setTimeout(() => navigate(`/shop/${data.slug}`), 800)
   }
 
   const shopUrl = `${window.location.origin}/shop/${form.slug || 'your-shop-name'}`
