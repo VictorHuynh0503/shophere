@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Nav from '../components/Nav'
 import { ToastContainer, toast } from '../components/Toast'
 import { supabase, Shop, Listing } from '../lib/supabase'
+import { formatVND } from '../lib/currency'
 
 export default function ShopPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -61,9 +62,9 @@ export default function ShopPage() {
       <Nav />
       <div className="empty-state" style={{ paddingTop: 100 }}>
         <div className="empty-icon">🔍</div>
-        <h2 className="empty-title">Shop not found</h2>
-        <p className="empty-sub">The shop <strong>/{slug}</strong> doesn't exist yet.</p>
-        <Link to="/create-shop" className="btn btn-primary">Create This Shop</Link>
+        <h2 className="empty-title">Marketplace not found</h2>
+        <p className="empty-sub">The marketplace <strong>/{slug}</strong> doesn't exist yet.</p>
+        <Link to="/create-shop" className="btn btn-primary">Create This Marketplace</Link>
       </div>
     </>
   )
@@ -89,8 +90,23 @@ export default function ShopPage() {
           <div className="shop-meta">
             <h1 className="shop-name">{shop?.name}</h1>
             {shop?.description && <p className="shop-desc">{shop.description}</p>}
-            <div style={{ marginTop: 8, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <span className="badge badge-gray">🛍️ {listings.length} listings</span>
+            <div style={{ marginTop: 12, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span className="badge badge-gray">� {listings.length} products</span>
+              {shop?.contact_phone && (
+                <a href={`tel:${shop.contact_phone}`} className="badge badge-gray" style={{ cursor: 'pointer', textDecoration: 'none' }}>
+                  📞 {shop.contact_phone}
+                </a>
+              )}
+              {shop?.contact_zalo && (
+                <a href={shop.contact_zalo} target="_blank" rel="noopener noreferrer" className="badge badge-gray" style={{ cursor: 'pointer', textDecoration: 'none' }}>
+                  💬 Zalo
+                </a>
+              )}
+              {shop?.owner_email && (
+                <a href={`mailto:${shop.owner_email}`} className="badge badge-gray" style={{ cursor: 'pointer', textDecoration: 'none' }}>
+                  ✉️ Email
+                </a>
+              )}
             </div>
           </div>
           <div className="shop-actions">
@@ -109,18 +125,18 @@ export default function ShopPage() {
         {listings.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📦</div>
-            <h3 className="empty-title">No listings yet</h3>
-            <p className="empty-sub">Start adding products to your shop!</p>
-            <Link to={`/shop/${slug}/new-listing`} className="btn btn-primary">+ Create First Listing</Link>
+            <h3 className="empty-title">No products yet</h3>
+            <p className="empty-sub">Start adding products to your marketplace!</p>
+            <Link to={`/shop/${slug}/new-listing`} className="btn btn-primary">+ Create First Product</Link>
           </div>
         ) : (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <div>
                 <h2 className="section-title" style={{ marginBottom: 0 }}>ALL PRODUCTS</h2>
-                <p style={{ color: 'var(--muted)', fontSize: 13 }}>{listings.length} items</p>
+                <p style={{ color: 'var(--muted)', fontSize: 13 }}>{listings.length} items for sale</p>
               </div>
-              <Link to={`/shop/${slug}/new-listing`} className="btn btn-primary btn-sm">+ New Listing</Link>
+              <Link to={`/shop/${slug}/new-listing`} className="btn btn-primary btn-sm">+ New Product</Link>
             </div>
 
             <div className="product-grid">
@@ -143,8 +159,8 @@ export default function ShopPage() {
                   <div className="product-card-info">
                     <p className="product-card-title">{listing.title}</p>
                     <div className="product-card-price">
-                      <span className="price-current">${listing.price.toFixed(2)}</span>
-                      {listing.original_price && <span className="price-original">${listing.original_price.toFixed(2)}</span>}
+                      <span className="price-current">{formatVND(listing.price)}</span>
+                      {listing.original_price && <span className="price-original">{formatVND(listing.original_price)}</span>}
                     </div>
                     {listing.category && <span className="badge badge-gray" style={{ marginTop: 6, fontSize: 10 }}>{listing.category}</span>}
                   </div>
@@ -174,9 +190,9 @@ export default function ShopPage() {
               )}
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--red)' }}>${selectedListing.price.toFixed(2)}</span>
+                <span style={{ fontSize: 28, fontWeight: 700, color: 'var(--red)' }}>{formatVND(selectedListing.price)}</span>
                 {selectedListing.original_price && (
-                  <span style={{ fontSize: 16, color: 'var(--muted)', textDecoration: 'line-through' }}>${selectedListing.original_price.toFixed(2)}</span>
+                  <span style={{ fontSize: 16, color: 'var(--muted)', textDecoration: 'line-through' }}>{formatVND(selectedListing.original_price)}</span>
                 )}
                 <span className={`badge ${selectedListing.in_stock ? 'badge-green' : 'badge-gray'}`}>
                   {selectedListing.in_stock ? '✓ In Stock' : 'Sold Out'}

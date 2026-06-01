@@ -4,6 +4,7 @@ import Nav from '../components/Nav'
 import { ToastContainer, toast } from '../components/Toast'
 import ImageUploader from '../components/ImageUploader'
 import { supabase, Shop } from '../lib/supabase'
+import { formatVND } from '../lib/currency'
 
 const CATEGORIES = ['Fashion', 'Shoes', 'Beauty', 'Home & Living', 'Electronics', 'Bags', 'Jewelry', 'Sports', 'Food', 'Art', 'Kids', 'Other']
 
@@ -132,14 +133,14 @@ export default function CreateListingPage() {
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Sale Price *</label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--mid)', fontWeight: 700 }}>$</span>
+                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--mid)', fontWeight: 700 }}>₫</span>
                   <input
                     className="form-input"
                     style={{ paddingLeft: 28 }}
                     type="number"
                     min="0"
-                    step="0.01"
-                    placeholder="0.00"
+                    step="1000"
+                    placeholder="0"
                     value={form.price}
                     onChange={e => set('price', e.target.value)}
                   />
@@ -148,14 +149,14 @@ export default function CreateListingPage() {
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label">Original Price <span style={{ color: 'var(--muted)', fontWeight: 400, textTransform: 'none' }}>(optional)</span></label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--mid)', fontWeight: 700 }}>$</span>
+                  <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--mid)', fontWeight: 700 }}>₫</span>
                   <input
                     className="form-input"
                     style={{ paddingLeft: 28 }}
                     type="number"
                     min="0"
-                    step="0.01"
-                    placeholder="0.00"
+                    step="1000"
+                    placeholder="0"
                     value={form.original_price}
                     onChange={e => set('original_price', e.target.value)}
                   />

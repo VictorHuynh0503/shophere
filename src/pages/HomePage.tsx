@@ -31,15 +31,15 @@ export default function HomePage() {
 
       {/* HERO */}
       <section className="hero">
-        <p className="hero-eyebrow">✦ Your Fashion Marketplace ✦</p>
+        <p className="hero-eyebrow">✦ Your Marketplace Platform ✦</p>
         <h1 className="hero-title">SELL ANYTHING<br /><span>ANYWHERE</span></h1>
-        <p className="hero-sub">Create your personal shop in 60 seconds. Upload products, share your unique link, start selling.</p>
+        <p className="hero-sub">Create your personal marketplace in 60 seconds. Upload products, share your unique link, start selling.</p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link to="/create-shop" className="btn btn-primary btn-lg">
             🛍️ Start Selling Free
           </Link>
           <a href="#shops" className="btn btn-outline btn-lg" style={{ color: 'white', borderColor: 'rgba(255,255,255,.2)' }}>
-            Explore Shops
+            Explore Marketplaces
           </a>
         </div>
       </section>
@@ -60,12 +60,12 @@ export default function HomePage() {
         <div className="page-container">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
             <h2 className="section-title">HOW IT WORKS</h2>
-            <p className="section-sub">Three simple steps to your own shop</p>
+            <p className="section-sub">Three simple steps to your own marketplace</p>
           </div>
           <div className="grid-3">
             {[
-              { step: '01', icon: '🏪', title: 'Create Your Shop', desc: 'Pick a unique URL slug like yourshop.com/shop/mystore — it\'s your permanent address.' },
-              { step: '02', icon: '📦', title: 'Add Your Listings', desc: 'Upload photos, set prices, write descriptions. Works perfectly on phone camera too.' },
+              { step: '01', icon: '🏪', title: 'Create Your Marketplace', desc: 'Pick a unique URL slug like yourshop.com/shop/mystore — it\'s your permanent address.' },
+              { step: '02', icon: '📦', title: 'Add Your Products', desc: 'Upload photos, set prices, write descriptions. Works perfectly on phone camera too.' },
               { step: '03', icon: '🚀', title: 'Share & Sell', desc: 'Share your link anywhere — social media, WhatsApp, Instagram. Start selling instantly.' },
             ].map(item => (
               <div key={item.step} className="card" style={{ padding: 28 }}>
@@ -82,17 +82,34 @@ export default function HomePage() {
       {/* SHOPS */}
       <section id="shops" className="page-section">
         <div className="page-container">
-          <h2 className="section-title">SHOPS ON SHOPSPHERE</h2>
-          <p className="section-sub">Discover sellers from around the world</p>
+          <div style={{ marginBottom: 40, textAlign: 'center' }}>
+            <h2 style={{
+              fontSize: 'clamp(32px, 8vw, 72px)',
+              fontWeight: 900,
+              color: 'var(--dark)',
+              letterSpacing: '-1px',
+              marginBottom: 8,
+              lineHeight: 1.2
+            }}>SHOPS ON</h2>
+            <h2 style={{
+              fontSize: 'clamp(48px, 12vw, 120px)',
+              fontFamily: 'Bebas Neue',
+              fontWeight: 900,
+              color: 'var(--red)',
+              letterSpacing: '2px',
+              marginBottom: 16
+            }}>SHOPSPHERE</h2>
+            <p className="section-sub">Discover sellers and marketplaces from around the world</p>
+          </div>
 
           {loading ? (
             <div className="loading-center"><div className="spinner" /></div>
           ) : shops.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon">🏪</div>
-              <h3 className="empty-title">No shops yet!</h3>
+              <h3 className="empty-title">No marketplaces yet!</h3>
               <p className="empty-sub">Be the first seller on ShopSphere.</p>
-              <Link to="/create-shop" className="btn btn-primary">Create First Shop</Link>
+              <Link to="/create-shop" className="btn btn-primary">Create First Marketplace</Link>
             </div>
           ) : (
             <div className="product-grid">

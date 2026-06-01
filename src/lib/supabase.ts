@@ -8,6 +8,8 @@ export interface Shop {
   banner_url: string | null;
   logo_url: string | null;
   owner_email: string;
+  contact_phone?: string | null;
+  contact_zalo?: string | null;
   created_at: string;
 }
 

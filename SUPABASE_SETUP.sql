@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS shops (
   banner_url TEXT,
   logo_url TEXT,
   owner_email TEXT NOT NULL,
+  contact_phone TEXT,
+  contact_zalo TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

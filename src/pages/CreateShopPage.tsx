@@ -17,6 +17,8 @@ export default function CreateShopPage() {
     name: '',
     description: '',
     owner_email: '',
+    contact_phone: '',
+    contact_zalo: '',
   })
   const [logoImages, setLogoImages] = useState<string[]>([])
   const [bannerImages, setBannerImages] = useState<string[]>([])
@@ -33,10 +35,12 @@ export default function CreateShopPage() {
     if (slug.length < 3) { setSlugAvailable(null); return }
     setCheckingSlug(true)
     try {
-      const { data, error } = await supabase.from('shops').select('id').eq('slug', slug).single()
-      setSlugAvailable(!data && !error)
+      const { data } = await supabase.from('shops').select('id').eq('slug', slug)
+      // If data is empty array, slug is available. If array has items, slug is taken
+      setSlugAvailable(data && Array.isArray(data) && data.length === 0)
     } catch (error) {
       console.error('Error checking slug:', error)
+      setSlugAvailable(false)
     } finally {
       setCheckingSlug(false)
     }
@@ -55,6 +59,8 @@ export default function CreateShopPage() {
         name: form.name,
         description: form.description,
         owner_email: form.owner_email,
+        contact_phone: form.contact_phone || null,
+        contact_zalo: form.contact_zalo || null,
         logo_url: logoImages[0] || null,
         banner_url: bannerImages[0] || null,
       }).select().single()
@@ -83,7 +89,7 @@ export default function CreateShopPage() {
 
       <div className="page-container" style={{ maxWidth: 640, paddingTop: 40, paddingBottom: 80 }}>
         <div style={{ marginBottom: 32 }}>
-          <h1 className="section-title">OPEN YOUR SHOP</h1>
+          <h1 className="section-title">OPEN YOUR MARKETPLACE</h1>
           <p style={{ color: 'var(--mid)', fontSize: 15 }}>Set up your store in 2 minutes</p>
         </div>
 
@@ -110,11 +116,11 @@ export default function CreateShopPage() {
           {/* STEP 1 */}
           {step === 1 && (
             <>
-              <h2 style={{ fontWeight: 700, marginBottom: 6, fontSize: 18 }}>Choose Your Shop URL</h2>
-              <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 24 }}>This will be your permanent shop address. Choose wisely!</p>
+              <h2 style={{ fontWeight: 700, marginBottom: 6, fontSize: 18 }}>Choose Your Marketplace URL</h2>
+              <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 24 }}>This will be your permanent marketplace address. Choose wisely!</p>
 
               <div className="form-group">
-                <label className="form-label">Shop URL Slug *</label>
+                <label className="form-label">Marketplace URL Slug *</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
                   <span style={{ background: '#f5f5f5', border: '1.5px solid var(--border)', borderRight: 'none', padding: '12px 14px', borderRadius: '4px 0 0 4px', fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                     /shop/
@@ -175,6 +181,18 @@ export default function CreateShopPage() {
                 <label className="form-label">Your Email *</label>
                 <input className="form-input" type="email" placeholder="you@example.com" value={form.owner_email} onChange={e => set('owner_email', e.target.value)} />
                 <span className="form-hint">Used to manage your shop (not shown publicly)</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Phone Number (Optional)</label>
+                <input className="form-input" type="tel" placeholder="+84 912 345 678" value={form.contact_phone} onChange={e => set('contact_phone', e.target.value)} />
+                <span className="form-hint">Displayed to customers for inquiries</span>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Zalo Link (Optional)</label>
+                <input className="form-input" placeholder="https://zalo.me/your-number" value={form.contact_zalo} onChange={e => set('contact_zalo', e.target.value)} />
+                <span className="form-hint">Zalo contact link for customers</span>
               </div>
 
               <div style={{ display: 'flex', gap: 8 }}>
