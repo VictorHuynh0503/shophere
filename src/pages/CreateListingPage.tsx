@@ -27,9 +27,9 @@ export default function CreateListingPage() {
     if (!slug) return
     async function fetchShop() {
       try {
-        const result = await supabase.from('shops').select('*').eq('slug', slug).single()
-        const data = result.data as Shop | null
-        setShop(data)
+        const { data, error } = await supabase.from('shops').select('*').eq('slug', slug).single()
+        if (error) throw error
+        setShop((data as unknown as Shop) || null)
       } catch (error) {
         console.error('Error fetching shop:', error)
       }

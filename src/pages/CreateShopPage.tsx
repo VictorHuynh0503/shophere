@@ -33,9 +33,8 @@ export default function CreateShopPage() {
     if (slug.length < 3) { setSlugAvailable(null); return }
     setCheckingSlug(true)
     try {
-      const result = await supabase.from('shops').select('id').eq('slug', slug).single()
-      const data = result.data as { id: string } | null
-      setSlugAvailable(!data)
+      const { data, error } = await supabase.from('shops').select('id').eq('slug', slug).single()
+      setSlugAvailable(!data && !error)
     } catch (error) {
       console.error('Error checking slug:', error)
     } finally {
@@ -51,7 +50,7 @@ export default function CreateShopPage() {
 
     setLoading(true)
     try {
-      const result = await supabase.from('shops').insert({
+      const { data, error } = await supabase.from('shops').insert({
         slug: form.slug,
         name: form.name,
         description: form.description,
@@ -60,9 +59,6 @@ export default function CreateShopPage() {
         banner_url: bannerImages[0] || null,
       }).select().single()
 
-      const data = result.data as any
-      const error = result.error as any
-
       if (error) {
         toast(error.message || 'Failed to create shop', 'error')
         setLoading(false)
@@ -70,7 +66,7 @@ export default function CreateShopPage() {
       }
 
       toast('🎉 Shop created successfully!', 'success')
-      setTimeout(() => navigate(`/shop/${data.slug}`), 800)
+      setTimeout(() => navigate(`/shop/${(data as any)?.slug}`), 800)
     } catch (error) {
       console.error('Error creating shop:', error)
       toast('Failed to create shop', 'error')

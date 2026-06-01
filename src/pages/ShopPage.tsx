@@ -17,14 +17,12 @@ export default function ShopPage() {
     if (!slug) return
     async function load() {
       try {
-        const shopResult = await supabase.from('shops').select('*').eq('slug', slug).single()
-        const shopData = shopResult.data as Shop | null
-        if (!shopData) { setNotFound(true); setLoading(false); return }
-        setShop(shopData)
+        const { data: shopData, error: shopError } = await supabase.from('shops').select('*').eq('slug', slug).single()
+        if (shopError || !shopData) { setNotFound(true); setLoading(false); return }
+        setShop((shopData as unknown as Shop) || null)
 
-        const listResult = await supabase.from('listings').select('*').eq('shop_id', shopData.id).order('created_at', { ascending: false })
-        const listData = listResult.data as Listing[] | null
-        setListings(listData || [])
+        const { data: listData, error: listError } = await supabase.from('listings').select('*').eq('shop_id', (shopData as any).id).order('created_at', { ascending: false })
+        setListings((listError ? [] : (listData as unknown as Listing[]) || []))
       } catch (error) {
         console.error('Error loading shop:', error)
         setNotFound(true)
@@ -126,11 +124,13 @@ export default function ShopPage() {
             </div>
 
             <div className="product-grid">
-              {listings.map((listing: Listing) => (
+              {listings.map((listing: Listing) => {
+                const listingImg = listing.images as string[] | undefined
+                return (
                 <div key={listing.id} className="card product-card" onClick={() => setSelectedListing(listing)}>
                   <div className="product-card-image">
-                    {listing.images?.[0]
-                      ? <img src={(listing.images as string[])[0]} alt={listing.title} />
+                    {listingImg?.[0]
+                      ? <img src={listingImg[0]} alt={listing.title} />
                       : <div className="no-image">🖼️</div>
                     }
                     {discount(listing) && <span className="product-card-badge">-{discount(listing)}%</span>}
@@ -149,7 +149,8 @@ export default function ShopPage() {
                     {listing.category && <span className="badge badge-gray" style={{ marginTop: 6, fontSize: 10 }}>{listing.category}</span>}
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </>
         )}
@@ -166,7 +167,7 @@ export default function ShopPage() {
             <div className="modal-body">
               {selectedListing.images?.length > 0 && (
                 <div style={{ display: 'flex', gap: 8, marginBottom: 20, overflowX: 'auto' }}>
-                  {selectedListing.images.map((img: string, i: number) => (
+                  {(selectedListing.images as string[]).map((img: string, i: number) => (
                     <img key={i} src={img} alt="" style={{ height: 200, width: 'auto', borderRadius: 8, flexShrink: 0 }} />
                   ))}
                 </div>

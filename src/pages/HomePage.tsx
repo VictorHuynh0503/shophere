@@ -13,9 +13,8 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchShops() {
       try {
-        const result = await supabase.from('shops').select('*').order('created_at', { ascending: false }).limit(12)
-        const data = result.data as Shop[] | null
-        setShops(data || [])
+        const { data, error } = await supabase.from('shops').select('*').order('created_at', { ascending: false }).limit(12)
+        setShops((error ? [] : (data as unknown as Shop[]) || []))
       } catch (error) {
         console.error('Error fetching shops:', error)
       } finally {
